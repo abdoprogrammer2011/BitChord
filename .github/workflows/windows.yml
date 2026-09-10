@@ -23,7 +23,7 @@ jobs:
       - name: Set up Visual Studio MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build unsigned MSIX package
+      - name: Build solution and unsigned MSIX package
         shell: pwsh
         run: |
           $msbuild = Get-ChildItem "${env:ProgramFiles}\Microsoft Visual Studio\2022" -Filter MSBuild.exe -Recurse |
@@ -33,25 +33,25 @@ jobs:
             throw "MSBuild was not found on the hosted Windows runner."
           }
 
-          & $msbuild.FullName windows/BitChord.WinUI/BitChord.WinUI.csproj `
-            /t:Restore,Build `
+          $solution = Join-Path $env:GITHUB_WORKSPACE "windows\BitChord.sln"
+          if (-not (Test-Path $solution)) {
+            throw "BitChord.sln was not found at $solution."
+          }
+
+          & $msbuild.FullName $solution `
             /p:Configuration=Release `
             /p:Platform=x64 `
             /p:RuntimeIdentifier=win-x64 `
-            /v:minimal
-          if ($LASTEXITCODE -ne 0) {
-            throw "WinUI project build failed with exit code $LASTEXITCODE."
-          }
-
-          & $msbuild.FullName windows/BitChord.Package/BitChord.Package.wapproj `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
             /p:OutputPath="${{ github.workspace }}\windows\BitChord.Package\bin\Release\" `
             /p:BaseOutputPath="${{ github.workspace }}\windows\BitChord.Package\bin\" `
             /p:AppxPackageSigningEnabled=false `
             /p:AppxBundle=Always `
             /p:UapAppxPackageBuildMode=SideloadOnly `
-            /p:AppxPackageDir="${{ github.workspace }}\windows\artifacts\"
+            /p:AppxPackageDir="${{ github.workspace }}\windows\artifacts\" `
+            /v:minimal
+          if ($LASTEXITCODE -ne 0) {
+            throw "BitChord solution build failed with exit code $LASTEXITCODE."
+          }
 
       - name: Upload MSIX artifacts
         uses: actions/upload-artifact@v4
