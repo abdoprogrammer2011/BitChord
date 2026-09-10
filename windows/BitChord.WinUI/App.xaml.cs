@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using System;
 
 namespace BitChord.WinUI;
@@ -9,6 +10,12 @@ public sealed class App : Application
 
     public App()
     {
+        if (!Resources.ContainsKey("TabViewButtonBackground"))
+        {
+            Resources["TabViewButtonBackground"] =
+                new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+        }
+
         UnhandledException += OnUnhandledException;
     }
 
