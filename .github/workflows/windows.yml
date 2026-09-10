@@ -23,9 +23,6 @@ jobs:
       - name: Set up Visual Studio MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Restore solution packages
-        run: dotnet restore windows/BitChord.sln
-
       - name: Build solution and unsigned MSIX package
         shell: pwsh
         run: |
@@ -39,6 +36,15 @@ jobs:
           $solution = Join-Path $env:GITHUB_WORKSPACE "windows\BitChord.sln"
           if (-not (Test-Path $solution)) {
             throw "BitChord.sln was not found at $solution."
+          }
+
+          & $msbuild.FullName $solution `
+            /t:Restore `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /v:minimal
+          if ($LASTEXITCODE -ne 0) {
+            throw "BitChord solution restore failed with exit code $LASTEXITCODE."
           }
 
           & $msbuild.FullName $solution `
