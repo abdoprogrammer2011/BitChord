@@ -9,7 +9,7 @@
     <DisplayName>BitChord</DisplayName>
     <PublisherDisplayName>BitChord</PublisherDisplayName>
     <Description>Aesthetic music for Windows</Description>
-    <Logo>Assets\Logo.png</Logo>
+    <Logo>Assets\Logo50.png</Logo>
   </Properties>
   <Resources><Resource Language="en-us"/></Resources>
   <Dependencies>
@@ -20,7 +20,7 @@
   </Capabilities>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements AppListEntry="none" DisplayName="BitChord" Description="Aesthetic music for Windows" BackgroundColor="#0D0F16" Square44x44Logo="Assets\Logo.png" Square150x150Logo="Assets\Logo.png"/>
+      <uap:VisualElements AppListEntry="none" DisplayName="BitChord" Description="Aesthetic music for Windows" BackgroundColor="#0D0F16" Square44x44Logo="Assets\Logo44.png" Square150x150Logo="Assets\Logo150.png"/>
     </Application>
   </Applications>
 </Package>

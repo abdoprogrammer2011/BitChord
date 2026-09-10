@@ -27,6 +27,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="Assets\Logo44.png" />
+    <Content Include="Assets\Logo50.png" />
+    <Content Include="Assets\Logo150.png" />
   </ItemGroup>
 
   <ItemGroup>
