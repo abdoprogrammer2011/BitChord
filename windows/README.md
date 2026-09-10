@@ -25,3 +25,12 @@ configure a certificate in the project's **Package** properties and enable
 
 The package project links the existing repository `Logo.png` instead of
 duplicating the Android artwork. No credentials or service keys are included.
+
+## Build automatically with GitHub Actions
+
+The `Windows companion` workflow runs on pushes, pull requests, and manual
+dispatches. It restores and builds the WinUI project, creates an unsigned MSIX
+bundle on `windows-2022`, and uploads the package as a 14-day GitHub Actions
+artifact. Open the workflow run in GitHub and download
+`bitchord-windows-msix-<run-number>` from the **Artifacts** section to test it
+before the pull request is merged.

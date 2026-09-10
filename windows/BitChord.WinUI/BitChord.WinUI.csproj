@@ -19,6 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\Logo.png" />
+    <Content Include="..\..\Logo.png" Link="Assets\Logo.png" />
   </ItemGroup>
 </Project>

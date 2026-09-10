@@ -19,7 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="..\BitChord.WinUI\Package.appxmanifest" />
-    <None Include="..\Logo.png" Link="Assets\Logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\Microsoft.AppXPackage.Targets"
           Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\Microsoft.AppXPackage.Targets')" />
