@@ -26,6 +26,11 @@ configure a certificate in the project's **Package** properties and enable
 The package project links the existing repository `Logo.png` instead of
 duplicating the Android artwork. No credentials or service keys are included.
 
+The Windows project is configured as a self-contained MSIX app. This packages
+the Windows App SDK runtime with BitChord, so the installed app does not depend
+on a separately registered Windows App Runtime version and does not need a
+bootstrapper call before `Application.Start`.
+
 ## Build automatically with GitHub Actions
 
 The `Windows companion` workflow runs on pushes, pull requests, and manual

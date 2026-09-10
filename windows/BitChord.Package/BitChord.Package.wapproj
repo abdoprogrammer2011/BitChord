@@ -15,6 +15,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <BaseOutputPath>bin\</BaseOutputPath>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <GenerateAppInstallerFile>false</GenerateAppInstallerFile>
     <AppxPackageDir>$(SolutionDir)artifacts\</AppxPackageDir>
   </PropertyGroup>
