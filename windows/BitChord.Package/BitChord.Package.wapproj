@@ -8,6 +8,8 @@
     <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <Platforms>x64</Platforms>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <BaseOutputPath>bin\</BaseOutputPath>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
     <GenerateAppInstallerFile>false</GenerateAppInstallerFile>
     <AppxPackageDir>$(SolutionDir)artifacts\</AppxPackageDir>

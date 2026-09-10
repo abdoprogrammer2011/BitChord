@@ -46,6 +46,8 @@ jobs:
           & $msbuild.FullName windows/BitChord.Package/BitChord.Package.wapproj `
             /p:Configuration=Release `
             /p:Platform=x64 `
+            /p:OutputPath="${{ github.workspace }}\windows\BitChord.Package\bin\Release\" `
+            /p:BaseOutputPath="${{ github.workspace }}\windows\BitChord.Package\bin\" `
             /p:AppxPackageSigningEnabled=false `
             /p:AppxBundle=Always `
             /p:UapAppxPackageBuildMode=SideloadOnly `
