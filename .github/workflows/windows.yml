@@ -23,7 +23,34 @@ jobs:
       - name: Set up Visual Studio MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Build solution and unsigned MSIX package
+      - name: Create development signing certificate
+        shell: pwsh
+        run: |
+          $signingDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\signing"
+          New-Item -ItemType Directory -Path $signingDirectory -Force | Out-Null
+
+          $certificate = New-SelfSignedCertificate `
+            -Type CodeSigning `
+            -Subject "CN=BitChord" `
+            -FriendlyName "BitChord development signing certificate" `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -NotAfter (Get-Date).AddYears(1)
+          if (-not $certificate) {
+            throw "The development signing certificate could not be created."
+          }
+
+          $passwordText = [Guid]::NewGuid().ToString("N")
+          $password = ConvertTo-SecureString $passwordText -AsPlainText -Force
+          $pfxPath = Join-Path $signingDirectory "BitChord-dev.pfx"
+          $cerPath = Join-Path $signingDirectory "BitChord-dev.cer"
+          Export-PfxCertificate -Cert $certificate -FilePath $pfxPath -Password $password | Out-Null
+          Export-Certificate -Cert $certificate -FilePath $cerPath | Out-Null
+
+          "BITCHORD_PFX_PATH=$pfxPath" >> $env:GITHUB_ENV
+          "BITCHORD_CER_PATH=$cerPath" >> $env:GITHUB_ENV
+          "BITCHORD_CERT_PASSWORD=$passwordText" >> $env:GITHUB_ENV
+
+      - name: Build solution and signed MSIX package
         shell: pwsh
         run: |
           $msbuild = Get-ChildItem "${env:ProgramFiles}\Microsoft Visual Studio\2022" -Filter MSBuild.exe -Recurse |
@@ -50,10 +77,17 @@ jobs:
           & $msbuild.FullName $solution `
             /p:Configuration=Release `
             /p:Platform=x64 `
+            /p:AppxPackageSigningEnabled=true `
+            /p:PackageCertificateKeyFile="$env:BITCHORD_PFX_PATH" `
+            /p:PackageCertificatePassword="$env:BITCHORD_CERT_PASSWORD" `
             /v:minimal
           if ($LASTEXITCODE -ne 0) {
             throw "BitChord solution build failed with exit code $LASTEXITCODE."
           }
+
+          $artifactDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts"
+          New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
+          Copy-Item $env:BITCHORD_CER_PATH (Join-Path $artifactDirectory "BitChord-dev.cer") -Force
 
       - name: Upload MSIX artifacts
         uses: actions/upload-artifact@v4
