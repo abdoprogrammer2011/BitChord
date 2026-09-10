@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="TabViewButtonBackground" Color="#42FFFFFF"/>
                     <SolidColorBrush x:Key="PageBackgroundBrush" Color="#0D0F16"/>
                     <SolidColorBrush x:Key="CardBackgroundBrush" Color="#42FFFFFF"/>
                     <SolidColorBrush x:Key="CardBorderBrush" Color="#28FFFFFF"/>
@@ -16,6 +17,7 @@
                     <SolidColorBrush x:Key="AccentStrongBrush" Color="#8D6BFF"/>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="TabViewButtonBackground" Color="#BFFFFFFF"/>
                     <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F1F0F7"/>
                     <SolidColorBrush x:Key="CardBackgroundBrush" Color="#BFFFFFFF"/>
                     <SolidColorBrush x:Key="CardBorderBrush" Color="#5AFFFFFF"/>
