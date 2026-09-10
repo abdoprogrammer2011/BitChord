@@ -23,7 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\..\Logo.png" Link="Assets\Logo.png" />
+    <Content Include="Assets\Logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
