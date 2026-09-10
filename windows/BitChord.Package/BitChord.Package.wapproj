@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{E43B7E29-5C87-4684-A1F2-42BB86F37BE9}</ProjectGuid>
+    <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <ProjectCapability Include="Appx" />
+    <Platforms>x64</Platforms>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <GenerateAppInstallerFile>false</GenerateAppInstallerFile>
+    <AppxPackageDir>$(SolutionDir)artifacts\</AppxPackageDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BitChord.WinUI\BitChord.WinUI.csproj">
+      <Project>{B17C8F48-88A2-4F2A-9A8C-2B5E61C1B9A1}</Project>
+      <Name>BitChord.WinUI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="..\BitChord.WinUI\Package.appxmanifest" />
+    <None Include="..\Logo.png" Link="Assets\Logo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\Microsoft.AppXPackage.Targets"
+          Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\Microsoft.AppXPackage.Targets')" />
+</Project>
