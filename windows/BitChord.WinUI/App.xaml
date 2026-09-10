@@ -5,6 +5,8 @@
     xmlns:local="using:BitChord.WinUI">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Fallback available before theme dictionaries are selected. -->
+            <SolidColorBrush x:Key="TabViewButtonBackground" Color="Transparent"/>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <SolidColorBrush x:Key="TabViewButtonBackground" Color="#42FFFFFF"/>
