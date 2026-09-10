@@ -19,9 +19,20 @@ keyboard-friendly controls, a persistent mini-player, and reduced-motion setting
 ## Build the installer
 
 Select the `BitChord.Package` project and build `Release | x64`. Visual Studio
-places the unsigned MSIX bundle under `windows\artifacts`. For distribution,
-configure a certificate in the project's **Package** properties and enable
-`AppxPackageSigningEnabled`.
+places the unsigned MSIX bundle under `windows\artifacts`. For distribution, configure a certificate in the project's **Package**
+properties and enable `AppxPackageSigningEnabled`. The workflow signs the
+package using the `BITCHORD_PFX_BASE64` and `BITCHORD_PFX_PASSWORD` repository
+secrets when they are configured. To create the first secret, encode the PFX
+without committing it:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes(".\BitChord-signing.pfx"))
+```
+
+Add that output as `BITCHORD_PFX_BASE64` and the PFX password as
+`BITCHORD_PFX_PASSWORD` under **Settings > Secrets and variables > Actions**.
+If the secrets are absent, pull requests use a temporary self-signed
+certificate instead.
 
 The package project links the existing repository `Logo.png` instead of
 duplicating the Android artwork. No credentials or service keys are included.
@@ -34,8 +45,14 @@ bootstrapper call before `Application.Start`.
 ## Build automatically with GitHub Actions
 
 The `Windows companion` workflow runs on pushes, pull requests, and manual
-dispatches. It restores and builds the WinUI project, creates an unsigned MSIX
-bundle on `windows-2022`, and uploads the package as a 14-day GitHub Actions
-artifact. Open the workflow run in GitHub and download
-`bitchord-windows-msix-<run-number>` from the **Artifacts** section to test it
-before the pull request is merged.
+dispatches. It restores, builds, and signs the MSIX bundle on `windows-2022`,
+then uploads the package and public `.cer` file as a 14-day artifact. Open the
+workflow run in GitHub and download
+`bitchord-windows-msix-<run-number>` from the **Artifacts** section.
+
+A self-signed certificate is included in the package signature, but Windows
+still requires that certificate's issuing certificate be trusted before
+installing an MSIX from outside the Microsoft Store. Install the uploaded
+`.cer` into **Trusted People** on test machines, or distribute through an
+enterprise trust policy. A Store-signed package does not require this manual
+trust step.

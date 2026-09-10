@@ -15,37 +15,54 @@ jobs:
   build-winui:
     name: Build WinUI 3 and MSIX
     runs-on: windows-2022
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Visual Studio MSBuild
         uses: microsoft/setup-msbuild@v2
 
-      - name: Create development signing certificate
+      - name: Prepare MSIX signing certificate
         shell: pwsh
+        env:
+          BITCHORD_PFX_BASE64: ${{ secrets.BITCHORD_PFX_BASE64 }}
+          BITCHORD_PFX_PASSWORD: ${{ secrets.BITCHORD_PFX_PASSWORD }}
         run: |
           $signingDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\signing"
           New-Item -ItemType Directory -Path $signingDirectory -Force | Out-Null
+          $pfxPath = Join-Path $signingDirectory "BitChord-signing.pfx"
+          $cerPath = Join-Path $signingDirectory "BitChord-signing.cer"
 
-          $certificate = New-SelfSignedCertificate `
-            -Type CodeSigning `
-            -Subject "CN=BitChord" `
-            -FriendlyName "BitChord development signing certificate" `
-            -CertStoreLocation "Cert:\CurrentUser\My" `
-            -NotAfter (Get-Date).AddYears(1)
-          if (-not $certificate) {
-            throw "The development signing certificate could not be created."
+          if ($env:BITCHORD_PFX_BASE64) {
+            if (-not $env:BITCHORD_PFX_PASSWORD) {
+              throw "BITCHORD_PFX_PASSWORD must be configured with BITCHORD_PFX_BASE64."
+            }
+            try {
+              [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:BITCHORD_PFX_BASE64))
+            } catch {
+              throw "BITCHORD_PFX_BASE64 is not valid Base64: $($_.Exception.Message)"
+            }
+            $passwordText = $env:BITCHORD_PFX_PASSWORD
+          } else {
+            $certificate = New-SelfSignedCertificate `
+              -Type CodeSigning `
+              -Subject "CN=BitChord" `
+              -FriendlyName "BitChord development signing certificate" `
+              -CertStoreLocation "Cert:\CurrentUser\My" `
+              -NotAfter (Get-Date).AddYears(1)
+            if (-not $certificate) {
+              throw "The development signing certificate could not be created."
+            }
+            $passwordText = [Guid]::NewGuid().ToString("N")
+            $password = ConvertTo-SecureString $passwordText -AsPlainText -Force
+            $exportPasswordParameter = "-Password"
+            & Export-PfxCertificate -Cert $certificate -FilePath $pfxPath $exportPasswordParameter $password | Out-Null
+            Export-Certificate -Cert $certificate -FilePath $cerPath | Out-Null
           }
 
-          $passwordText = [Guid]::NewGuid().ToString("N")
-          $password = ConvertTo-SecureString $passwordText -AsPlainText -Force
-          $pfxPath = Join-Path $signingDirectory "BitChord-dev.pfx"
-          $cerPath = Join-Path $signingDirectory "BitChord-dev.cer"
-          Export-PfxCertificate -Cert $certificate -FilePath $pfxPath -Password $password | Out-Null
-          Export-Certificate -Cert $certificate -FilePath $cerPath | Out-Null
-
+          if (-not (Test-Path $cerPath)) {
+            $certificate = Get-PfxCertificate -FilePath $pfxPath
+            Export-Certificate -Cert $certificate -FilePath $cerPath | Out-Null
+          }
           "BITCHORD_PFX_PATH=$pfxPath" >> $env:GITHUB_ENV
           "BITCHORD_CER_PATH=$cerPath" >> $env:GITHUB_ENV
           "BITCHORD_CERT_PASSWORD=$passwordText" >> $env:GITHUB_ENV
@@ -59,21 +76,14 @@ jobs:
           if (-not $msbuild) {
             throw "MSBuild was not found on the hosted Windows runner."
           }
-
           $solution = Join-Path $env:GITHUB_WORKSPACE "windows\BitChord.sln"
           if (-not (Test-Path $solution)) {
             throw "BitChord.sln was not found at $solution."
           }
-
-          & $msbuild.FullName $solution `
-            /t:Restore `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
-            /v:minimal
+          & $msbuild.FullName $solution /t:Restore /p:Configuration=Release /p:Platform=x64 /v:minimal
           if ($LASTEXITCODE -ne 0) {
             throw "BitChord solution restore failed with exit code $LASTEXITCODE."
           }
-
           & $msbuild.FullName $solution `
             /p:Configuration=Release `
             /p:Platform=x64 `
@@ -84,10 +94,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             throw "BitChord solution build failed with exit code $LASTEXITCODE."
           }
-
           $artifactDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts"
           New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
-          Copy-Item $env:BITCHORD_CER_PATH (Join-Path $artifactDirectory "BitChord-dev.cer") -Force
+          Copy-Item $env:BITCHORD_CER_PATH (Join-Path $artifactDirectory "BitChord-signing.cer") -Force
 
       - name: Upload MSIX artifacts
         uses: actions/upload-artifact@v4
