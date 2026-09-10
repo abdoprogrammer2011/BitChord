@@ -2,6 +2,12 @@
 <Project ToolsVersion="15.0" DefaultTargets="Build"
          xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <WapPkgInstallDir Condition="'$(WapPkgInstallDir)' == ''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapPkgInstallDir>
+    <AppxTargetsLocation Condition="'$(AppxTargetsLocation)' == ''">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\</AppxTargetsLocation>
+    <EntryPointProjectUniqueName>..\BitChord.WinUI\BitChord.WinUI.csproj</EntryPointProjectUniqueName>
+  </PropertyGroup>
+  <Import Project="$(WapPkgInstallDir)Microsoft.DesktopBridge.props" />
+  <PropertyGroup>
     <ProjectGuid>{E43B7E29-5C87-4684-A1F2-42BB86F37BE9}</ProjectGuid>
     <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -22,5 +28,6 @@
   <ItemGroup>
     <AppxManifest Include="..\BitChord.WinUI\Package.appxmanifest" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\AppxPackage\Microsoft.AppXPackage.Targets" />
+  <Import Project="$(WapPkgInstallDir)Microsoft.DesktopBridge.targets" />
+  <Import Project="$(AppxTargetsLocation)Microsoft.AppxPackage.Targets" />
 </Project>
