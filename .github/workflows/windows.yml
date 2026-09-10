@@ -54,8 +54,10 @@ jobs:
             }
             $passwordText = [Guid]::NewGuid().ToString("N")
             $password = ConvertTo-SecureString $passwordText -AsPlainText -Force
-            $exportPasswordParameter = "-Password"
-            & Export-PfxCertificate -Cert $certificate -FilePath $pfxPath $exportPasswordParameter $password | Out-Null
+            Export-PfxCertificate `
+              -Cert $certificate `
+              -FilePath $pfxPath `
+              -Password $password | Out-Null
             Export-Certificate -Cert $certificate -FilePath $cerPath | Out-Null
           }
 
