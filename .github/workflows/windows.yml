@@ -20,16 +20,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: Restore WinUI project
-        run: dotnet restore windows/BitChord.WinUI/BitChord.WinUI.csproj
-
-      - name: Build WinUI project
-        run: dotnet build windows/BitChord.WinUI/BitChord.WinUI.csproj --configuration Release --no-restore --runtime win-x64
+      - name: Set up Visual Studio MSBuild
+        uses: microsoft/setup-msbuild@v2
 
       - name: Build unsigned MSIX package
         shell: pwsh
@@ -39,6 +31,16 @@ jobs:
             Select-Object -First 1
           if (-not $msbuild) {
             throw "MSBuild was not found on the hosted Windows runner."
+          }
+
+          & $msbuild.FullName windows/BitChord.WinUI/BitChord.WinUI.csproj `
+            /t:Restore,Build `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /v:minimal
+          if ($LASTEXITCODE -ne 0) {
+            throw "WinUI project build failed with exit code $LASTEXITCODE."
           }
 
           & $msbuild.FullName windows/BitChord.Package/BitChord.Package.wapproj `
