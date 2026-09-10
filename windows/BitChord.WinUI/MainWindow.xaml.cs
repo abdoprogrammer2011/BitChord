@@ -28,7 +28,6 @@ public sealed class MainWindow : Window
             IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed,
             IsSettingsVisible = false,
             PaneDisplayMode = NavigationViewPaneDisplayMode.Left,
-            PaneBackground = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
             Header = null
         };
         navigation.MenuItems.Add(NavigationItem("Home", Symbol.Home, "home"));
