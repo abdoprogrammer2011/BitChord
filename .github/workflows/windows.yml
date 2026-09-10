@@ -44,7 +44,6 @@ jobs:
           }
 
           & $msbuild.FullName windows/BitChord.Package/BitChord.Package.wapproj `
-            /t:AppxPackage `
             /p:Configuration=Release `
             /p:Platform=x64 `
             /p:AppxPackageSigningEnabled=false `
