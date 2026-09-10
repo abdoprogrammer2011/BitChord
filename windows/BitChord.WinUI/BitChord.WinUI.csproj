@@ -8,7 +8,6 @@
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
     <SelfContained>true</SelfContained>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
     <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <Nullable>enable</Nullable>
     <RootNamespace>BitChord.WinUI</RootNamespace>

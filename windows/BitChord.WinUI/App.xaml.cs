@@ -4,12 +4,14 @@ using System;
 
 namespace BitChord.WinUI;
 
-public sealed class App : Application
+public sealed partial class App : Application
 {
     public static Window? MainWindow { get; private set; }
 
     public App()
     {
+        InitializeComponent();
+
         if (!Resources.ContainsKey("TabViewButtonBackground"))
         {
             Resources["TabViewButtonBackground"] =
