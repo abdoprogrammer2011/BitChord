@@ -27,6 +27,15 @@
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="..\BitChord.WinUI\Package.appxmanifest" />
+    <Content Include="..\BitChord.WinUI\Assets\Logo44.png">
+      <Link>Assets\Logo44.png</Link>
+    </Content>
+    <Content Include="..\BitChord.WinUI\Assets\Logo50.png">
+      <Link>Assets\Logo50.png</Link>
+    </Content>
+    <Content Include="..\BitChord.WinUI\Assets\Logo150.png">
+      <Link>Assets\Logo150.png</Link>
+    </Content>
   </ItemGroup>
   <Import Project="$(WapPkgInstallDir)Microsoft.DesktopBridge.targets" />
   <Import Project="$(AppxTargetsLocation)Microsoft.AppxPackage.Targets" />
