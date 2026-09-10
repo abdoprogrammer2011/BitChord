@@ -2,6 +2,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Text;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -27,7 +28,6 @@ public sealed class MainWindow : Window
             IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed,
             IsSettingsVisible = false,
             PaneDisplayMode = NavigationViewPaneDisplayMode.Left,
-            Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
             PaneBackground = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
             Header = null
         };
@@ -40,7 +40,7 @@ public sealed class MainWindow : Window
         navigation.SelectionChanged += Navigation_SelectionChanged;
 
         var brand = new StackPanel { Margin = new Thickness(20, 20, 20, 28) };
-        brand.Children.Add(new TextBlock { Text = "B  BitChord", FontSize = 20, FontWeight = Windows.UI.Text.FontWeights.SemiBold });
+        brand.Children.Add(new TextBlock { Text = "B  BitChord", FontSize = 20, FontWeight = FontWeights.SemiBold });
         brand.Children.Add(new TextBlock { Text = "Music, in full color", FontSize = 11, Foreground = SecondaryBrush() });
         navigation.PaneHeader = brand;
         navigation.Content = _contentFrame;
@@ -95,7 +95,7 @@ public sealed class MainWindow : Window
             _ => "Find your next favorite sound."
         };
         var page = new StackPanel { Spacing = 16, Margin = new Thickness(44, 38, 44, 120), MaxWidth = 1100 };
-        page.Children.Add(new TextBlock { Text = title, FontSize = 34, FontWeight = Windows.UI.Text.FontWeights.SemiBold });
+        page.Children.Add(new TextBlock { Text = title, FontSize = 34, FontWeight = FontWeights.SemiBold });
         page.Children.Add(new TextBlock { Text = subtitle, FontSize = 16, Foreground = SecondaryBrush() });
         page.Children.Add(new Border
         {
@@ -107,7 +107,7 @@ public sealed class MainWindow : Window
                 Spacing = 12,
                 Children =
                 {
-                    new TextBlock { Text = tag == "settings" ? "Liquid glass" : "BitChord", FontSize = 24, FontWeight = Windows.UI.Text.FontWeights.SemiBold },
+                    new TextBlock { Text = tag == "settings" ? "Liquid glass" : "BitChord", FontSize = 24, FontWeight = FontWeights.SemiBold },
                     new TextBlock { Text = tag == "settings" ? "Translucent surfaces, artwork colors, and reduced motion." : "A polished native Windows music experience.", Foreground = SecondaryBrush() },
                     new Button { Content = tag == "settings" ? "Enabled" : "Play", HorizontalAlignment = HorizontalAlignment.Left }
                 }
@@ -116,7 +116,7 @@ public sealed class MainWindow : Window
         _contentFrame.Content = new ScrollViewer { Content = page };
     }
 
-    private UIElement CreatePlayerBar()
+    private FrameworkElement CreatePlayerBar()
     {
         var bar = new Border
         {
@@ -128,7 +128,7 @@ public sealed class MainWindow : Window
         var row = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
         row.Children.Add(new TextBlock { Text = "♫", FontSize = 30, Margin = new Thickness(0, 0, 14, 0) });
         var track = new StackPanel { Width = 250 };
-        track.Children.Add(new TextBlock { Text = "Midnight City", FontWeight = Windows.UI.Text.FontWeights.SemiBold });
+        track.Children.Add(new TextBlock { Text = "Midnight City", FontWeight = FontWeights.SemiBold });
         track.Children.Add(new TextBlock { Text = "M83  •  Hurry Up, We're Dreaming", FontSize = 12, Foreground = SecondaryBrush() });
         row.Children.Add(track);
         var previous = new Button { Content = "‹", FontSize = 24 };

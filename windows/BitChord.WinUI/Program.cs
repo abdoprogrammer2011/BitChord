@@ -9,10 +9,9 @@ public static class Program
     [global::System.STAThread]
     public static void Main(string[] args)
     {
-        Application.Start(_ =>
+        Application.Start((DispatcherQueue dispatcherQueue) =>
         {
-            var context = new DispatcherQueueSynchronizationContext(
-                DispatcherQueue.GetForCurrentThread());
+            var context = new DispatcherQueueSynchronizationContext(dispatcherQueue);
             SynchronizationContext.SetSynchronizationContext(context);
             _ = new App();
         });
