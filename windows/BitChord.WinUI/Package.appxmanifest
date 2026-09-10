@@ -19,8 +19,15 @@
     <rescap:Capability Name="runFullTrust"/>
   </Capabilities>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="$targetentrypoint$">
-      <uap:VisualElements AppListEntry="none" DisplayName="BitChord" Description="Aesthetic music for Windows" BackgroundColor="#0D0F16" Square44x44Logo="Assets\Logo44.png" Square150x150Logo="Assets\Logo150.png"/>
+    <Application Id="App"
+                 Executable="$targetnametoken$.exe"
+                 EntryPoint="BitChord.WinUI.App">
+      <uap:VisualElements AppListEntry="default"
+                          DisplayName="BitChord"
+                          Description="Aesthetic music for Windows"
+                          BackgroundColor="#0D0F16"
+                          Square44x44Logo="Assets\Logo44.png"
+                          Square150x150Logo="Assets\Logo150.png"/>
     </Application>
   </Applications>
 </Package>
