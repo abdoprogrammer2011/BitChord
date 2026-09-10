@@ -5,8 +5,6 @@
     xmlns:local="using:BitChord.WinUI">
     <Application.Resources>
         <ResourceDictionary>
-            <!-- Fallback available before theme dictionaries are selected. -->
-            <SolidColorBrush x:Key="TabViewButtonBackground" Color="Transparent"/>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <SolidColorBrush x:Key="TabViewButtonBackground" Color="#42FFFFFF"/>
@@ -29,6 +27,8 @@
                     <SolidColorBrush x:Key="AccentStrongBrush" Color="#4F38B5"/>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
+            <!-- Fallback available before theme dictionaries are selected. -->
+            <SolidColorBrush x:Key="TabViewButtonBackground" Color="Transparent"/>
             <Style TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="Segoe UI Variable"/>
                 <Setter Property="Foreground" Value="{ThemeResource TextPrimaryBrush}"/>
