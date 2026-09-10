@@ -1,6 +1,7 @@
 using Microsoft.UI.Xaml;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace BitChord.WinUI;
 
