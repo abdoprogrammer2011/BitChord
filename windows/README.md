@@ -52,12 +52,12 @@ bootstrapper call before `Application.Start`.
 
 The `Windows companion` workflow runs on pushes, pull requests, and manual
 dispatches. It restores, builds, and signs the MSIX bundle on `windows-2022`,
-then uploads the package and public `.cer` file as a 14-day artifact. Open the
-workflow run in GitHub and download
-`bitchord-windows-msix-<run-number>` from the **Artifacts** section.
+then compresses and uploads the package and public `.cer` file as
+`BitChord-MSIX.zip` in a 14-day artifact. Open the workflow run in GitHub and
+download `bitchord-windows-msix-<run-number>` from the **Artifacts** section.
 
-Download `bitchord-windows-setup-<run-number>` for the traditional
-`BitChord-Setup.exe` installer.
+Download `bitchord-windows-exe-<run-number>` for `BitChord-EXE.zip`, which
+contains the traditional `BitChord-Setup.exe` installer.
 
 A self-signed certificate is included in the package signature, but Windows
 still requires that certificate's issuing certificate be trusted before

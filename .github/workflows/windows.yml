@@ -100,15 +100,36 @@ jobs:
           New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
           Copy-Item $env:BITCHORD_CER_PATH (Join-Path $artifactDirectory "BitChord-signing.cer") -Force
 
-      - name: Upload MSIX artifacts
+      - name: Create compressed MSIX archive
+        shell: pwsh
+        run: |
+          $sourceDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts"
+          $packageDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\BitChord.Package\AppPackages"
+          $stagingDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\msix-archive"
+          $archivePath = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts\BitChord-MSIX.zip"
+          New-Item -ItemType Directory -Path $stagingDirectory -Force | Out-Null
+
+          $packageFiles = @(
+            Get-ChildItem $sourceDirectory -Recurse -File -Include *.msix, *.msixbundle, *.cer -ErrorAction SilentlyContinue
+            Get-ChildItem $packageDirectory -Recurse -File -Include *.msix, *.msixbundle, *.cer -ErrorAction SilentlyContinue
+          ) | Sort-Object FullName -Unique
+          if (-not $packageFiles) {
+            throw "No MSIX, MSIX bundle, or certificate files were found."
+          }
+
+          foreach ($file in $packageFiles) {
+            Copy-Item $file.FullName (Join-Path $stagingDirectory $file.Name) -Force
+          }
+          if (Test-Path $archivePath) {
+            Remove-Item $archivePath -Force
+          }
+          Compress-Archive -Path (Join-Path $stagingDirectory "*") -DestinationPath $archivePath -CompressionLevel Optimal
+
+      - name: Upload compressed MSIX archive
         uses: actions/upload-artifact@v4
         with:
           name: bitchord-windows-msix-${{ github.run_number }}
-          path: |
-            windows/artifacts/**/*.msix
-            windows/artifacts/**/*.msixbundle
-            windows/artifacts/**/*.cer
-            windows/BitChord.Package/AppPackages/**
+          path: windows/artifacts/BitChord-MSIX.zip
           if-no-files-found: error
           retention-days: 14
 
@@ -152,10 +173,23 @@ jobs:
             throw "EXE installer build failed with exit code $LASTEXITCODE."
           }
 
-      - name: Upload EXE installer
+      - name: Create compressed EXE archive
+        shell: pwsh
+        run: |
+          $setupPath = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts\BitChord-Setup.exe"
+          $archivePath = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts\BitChord-EXE.zip"
+          if (-not (Test-Path $setupPath)) {
+            throw "BitChord-Setup.exe was not found."
+          }
+          if (Test-Path $archivePath) {
+            Remove-Item $archivePath -Force
+          }
+          Compress-Archive -Path $setupPath -DestinationPath $archivePath -CompressionLevel Optimal
+
+      - name: Upload compressed EXE archive
         uses: actions/upload-artifact@v4
         with:
-          name: bitchord-windows-setup-${{ github.run_number }}
-          path: windows/artifacts/BitChord-Setup.exe
+          name: bitchord-windows-exe-${{ github.run_number }}
+          path: windows/artifacts/BitChord-EXE.zip
           if-no-files-found: error
           retention-days: 14
