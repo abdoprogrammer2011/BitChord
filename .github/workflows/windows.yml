@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build-winui:
-    name: Build WinUI 3 and MSIX
+    name: Build WinUI 3, MSIX, and EXE setup
     runs-on: windows-2022
     steps:
       - name: Checkout
@@ -109,5 +109,53 @@ jobs:
             windows/artifacts/**/*.msixbundle
             windows/artifacts/**/*.cer
             windows/BitChord.Package/AppPackages/**
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish unpackaged EXE payload
+        shell: pwsh
+        run: |
+          $publishDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\publish"
+          if (Test-Path $publishDirectory) {
+            Remove-Item $publishDirectory -Recurse -Force
+          }
+          dotnet publish .\windows\BitChord.WinUI\BitChord.WinUI.csproj `
+            --configuration Release `
+            --runtime win-x64 `
+            --self-contained true `
+            --output $publishDirectory `
+            -p:WindowsPackageType=None `
+            -p:WindowsAppSDKSelfContained=true `
+            -p:EnableMsixTooling=false `
+            --no-restore
+          if ($LASTEXITCODE -ne 0) {
+            throw "Unpackaged EXE publish failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Build EXE installer
+        shell: pwsh
+        run: |
+          $innoCompiler = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "${env:ProgramFiles}\Inno Setup 6\ISCC.exe"
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $innoCompiler) {
+            throw "Inno Setup 6 (ISCC.exe) was not found on the hosted runner."
+          }
+          $artifactDirectory = Join-Path $env:GITHUB_WORKSPACE "windows\artifacts"
+          New-Item -ItemType Directory -Path $artifactDirectory -Force | Out-Null
+          & $innoCompiler `
+            "/DMyAppVersion=1.0.${env:GITHUB_RUN_NUMBER}" `
+            "/DSourceDir=$env:GITHUB_WORKSPACE\windows\publish" `
+            "$env:GITHUB_WORKSPACE\windows\installer\BitChord.iss"
+          if ($LASTEXITCODE -ne 0) {
+            throw "EXE installer build failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Upload EXE installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: bitchord-windows-setup-${{ github.run_number }}
+          path: windows/artifacts/BitChord-Setup.exe
           if-no-files-found: error
           retention-days: 14

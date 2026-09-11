@@ -37,6 +37,12 @@ certificate instead.
 The package project links the existing repository `Logo.png` instead of
 duplicating the Android artwork. No credentials or service keys are included.
 
+The workflow also creates an unpackaged, self-contained installer named
+`BitChord-Setup.exe`. This is a traditional EXE installer generated with Inno
+Setup; it installs the published WinUI executable and creates Start Menu and
+optional Desktop shortcuts. It is separate from the signed MSIX and does not
+require MSIX certificate trust.
+
 The Windows project is configured as a self-contained MSIX app. This packages
 the Windows App SDK runtime with BitChord, so the installed app does not depend
 on a separately registered Windows App Runtime version and does not need a
@@ -49,6 +55,9 @@ dispatches. It restores, builds, and signs the MSIX bundle on `windows-2022`,
 then uploads the package and public `.cer` file as a 14-day artifact. Open the
 workflow run in GitHub and download
 `bitchord-windows-msix-<run-number>` from the **Artifacts** section.
+
+Download `bitchord-windows-setup-<run-number>` for the traditional
+`BitChord-Setup.exe` installer.
 
 A self-signed certificate is included in the package signature, but Windows
 still requires that certificate's issuing certificate be trusted before
