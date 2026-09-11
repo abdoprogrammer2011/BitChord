@@ -21,7 +21,7 @@
   <Applications>
     <Application Id="App"
                  Executable="$targetnametoken$.exe"
-                 EntryPoint="BitChord.WinUI.App">
+                 EntryPoint="$targetentrypoint$">
       <uap:VisualElements AppListEntry="default"
                           DisplayName="BitChord"
                           Description="Aesthetic music for Windows"

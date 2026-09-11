@@ -17,7 +17,6 @@ public sealed class MainWindow : Window
     public MainWindow()
     {
         Title = "BitChord";
-        ConfigureWindow();
 
         var root = new Grid { Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent) };
         root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
@@ -51,6 +50,7 @@ public sealed class MainWindow : Window
         root.Children.Add(player);
         Content = root;
 
+        ConfigureWindow();
         navigation.SelectedItem = navigation.MenuItems[0];
         ShowPage("home");
     }
