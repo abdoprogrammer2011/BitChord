@@ -24,7 +24,7 @@ public sealed class MainWindow : Window
     private readonly Grid _contentHost = new();
     private readonly TextBlock _pageTitle = new();
     private readonly TextBlock _pageSubtitle = new();
-    private readonly AutoSuggestBox _globalSearch = new();
+    private readonly Button _globalSearch = new();
     private readonly Button _playButton;
     private readonly Slider _progressSlider;
     private readonly TextBlock _playerTitle = new();
@@ -177,23 +177,11 @@ public sealed class MainWindow : Window
         bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         bar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        _globalSearch.PlaceholderText = "Search artists, albums, songs and playlists";
+        _globalSearch.Content = "Search artists, albums, songs and playlists";
         _globalSearch.Width = 420;
         _globalSearch.HorizontalAlignment = HorizontalAlignment.Left;
         SetAutomation(_globalSearch, "GlobalSearchBox", "Search music");
-        _globalSearch.QuerySubmitted += (_, args) =>
-        {
-            if (!string.IsNullOrWhiteSpace(args.QueryText))
-            {
-                ShowPage("explore");
-                SetStatus($"Showing results for “{args.QueryText.Trim()}”");
-            }
-        };
-        _globalSearch.TextChanged += (_, _) =>
-        {
-            if (!string.IsNullOrWhiteSpace(_globalSearch.Text))
-                _globalSearch.ItemsSource = new[] { "Search BitChord library", "Search YouTube Music", "Search playlists" };
-        };
+        _globalSearch.Click += (_, _) => ShowPage("explore");
         bar.Children.Add(_globalSearch);
 
         var signedIn = CreateButton("Sign in", "TopSignInButton", (_, _) =>
@@ -396,11 +384,13 @@ public sealed class MainWindow : Window
     {
         var scroll = (ScrollViewer)CreatePage("Explore", "Find a new favorite, browse moods, or search your library.");
         var stack = (StackPanel)scroll.Content;
-        var search = new AutoSuggestBox { PlaceholderText = "Search artists, albums, songs and playlists", Height = 48 };
+        var search = new TextBox { PlaceholderText = "Search artists, albums, songs and playlists", Height = 48 };
         SetAutomation(search, "ExploreSearchBox", "Explore search");
-        search.QuerySubmitted += (_, args) =>
+        search.KeyDown += (_, args) =>
         {
-            if (!string.IsNullOrWhiteSpace(args.QueryText)) SetStatus($"Searching for “{args.QueryText.Trim()}”");
+            if (args.Key == Windows.System.VirtualKey.Enter &&
+                !string.IsNullOrWhiteSpace(search.Text))
+                SetStatus($"Searching for “{search.Text.Trim()}”");
         };
         stack.Children.Add(search);
         stack.Children.Add(SectionHeading("Made for you", "ExploreMadeForYouHeading"));
@@ -653,7 +643,8 @@ public sealed class MainWindow : Window
         var moods = new[] { "Focus", "Energy", "Chill", "Night", "Workout", "Acoustic", "Electronic", "New releases" };
         for (var i = 0; i < moods.Length; i++)
         {
-            var button = CreateButton(moods[i], $"ExploreMood{i}Button", (_, _) => SetStatus($"{moods[i]} category selected"));
+            var moodTitle = moods[i];
+            var button = CreateButton(moodTitle, $"ExploreMood{i}Button", (_, _) => SetStatus($"{moodTitle} category selected"));
             button.HorizontalContentAlignment = HorizontalAlignment.Left;
             button.VerticalContentAlignment = VerticalAlignment.Top;
             button.Padding = new Thickness(14);

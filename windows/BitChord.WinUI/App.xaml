@@ -8,9 +8,6 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
             </ResourceDictionary.MergedDictionaries>
             <SolidColorBrush x:Key="TabViewButtonBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="TabViewButtonForeground" Color="#F8F8FC" />
-            <SolidColorBrush x:Key="TabViewScrollButtonBackground" Color="Transparent" />
-            <SolidColorBrush x:Key="TabViewScrollButtonForeground" Color="#F8F8FC" />
             <SolidColorBrush x:Key="PageBackgroundBrush" Color="#0D0F16" />
             <SolidColorBrush x:Key="CardBackgroundBrush" Color="#42FFFFFF" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#28FFFFFF" />
