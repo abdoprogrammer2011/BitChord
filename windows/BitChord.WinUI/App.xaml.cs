@@ -1,5 +1,4 @@
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -33,12 +32,6 @@ public sealed partial class App : Application
         {
             WriteStartupDiagnostic("App.InitializeComponent", exception);
             throw;
-        }
-
-        if (!Resources.ContainsKey("TabViewButtonBackground"))
-        {
-            Resources["TabViewButtonBackground"] =
-                new SolidColorBrush(Microsoft.UI.Colors.Transparent);
         }
 
         UnhandledException += OnUnhandledException;

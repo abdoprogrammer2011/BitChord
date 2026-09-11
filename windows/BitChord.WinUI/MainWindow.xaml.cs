@@ -22,26 +22,42 @@ public sealed class MainWindow : Window
         root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        var navigation = new NavigationView
+        var navigation = new Grid
         {
-            IsBackButtonVisible = NavigationViewBackButtonVisible.Collapsed,
-            IsSettingsVisible = false,
-            PaneDisplayMode = NavigationViewPaneDisplayMode.Left,
-            Header = null
+            ColumnDefinitions =
+            {
+                new ColumnDefinition { Width = new GridLength(220) },
+                new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+            }
         };
-        navigation.MenuItems.Add(NavigationItem("Home", Symbol.Home, "home"));
-        navigation.MenuItems.Add(NavigationItem("Explore", Symbol.World, "explore"));
-        navigation.MenuItems.Add(NavigationItem("Library", Symbol.Library, "library"));
-        navigation.MenuItems.Add(NavigationItem("Downloads", Symbol.Download, "downloads"));
-        navigation.MenuItems.Add(NavigationItem("Queue", Symbol.List, "queue"));
-        navigation.FooterMenuItems.Add(NavigationItem("Settings", Symbol.Setting, "settings"));
-        navigation.SelectionChanged += Navigation_SelectionChanged;
 
         var brand = new StackPanel { Margin = new Thickness(20, 20, 20, 28) };
         brand.Children.Add(new TextBlock { Text = "B  BitChord", FontSize = 20, FontWeight = FontWeights.SemiBold });
         brand.Children.Add(new TextBlock { Text = "Music, in full color", FontSize = 11, Foreground = SecondaryBrush() });
-        navigation.PaneHeader = brand;
-        navigation.Content = _contentFrame;
+        var menu = new StackPanel();
+        menu.Children.Add(brand);
+        foreach (var item in new[] { ("Home", "home"), ("Explore", "explore"), ("Library", "library"), ("Downloads", "downloads"), ("Queue", "queue"), ("Settings", "settings") })
+        {
+            var button = new Button
+            {
+                Content = item.Item1,
+                Tag = item.Item2,
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Margin = new Thickness(12, 2, 12, 2),
+                Padding = new Thickness(12, 10, 12, 10),
+                Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent),
+                Foreground = new SolidColorBrush(Microsoft.UI.Colors.White),
+                BorderThickness = new Thickness(0)
+            };
+            button.Click += NavigationButton_Click;
+            menu.Children.Add(button);
+        }
+
+        Grid.SetColumn(menu, 0);
+        navigation.Children.Add(menu);
+        Grid.SetColumn(_contentFrame, 1);
+        navigation.Children.Add(_contentFrame);
         Grid.SetRow(navigation, 0);
         root.Children.Add(navigation);
 
@@ -51,7 +67,6 @@ public sealed class MainWindow : Window
         Content = root;
 
         ConfigureWindow();
-        navigation.SelectedItem = navigation.MenuItems[0];
         ShowPage("home");
     }
 
@@ -65,12 +80,9 @@ public sealed class MainWindow : Window
         appWindow.Resize(new SizeInt32(1440, 900));
     }
 
-    private static NavigationViewItem NavigationItem(string label, Symbol icon, string tag) =>
-        new() { Content = label, Tag = tag, Icon = new SymbolIcon { Symbol = icon } };
-
-    private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    private void NavigationButton_Click(object sender, RoutedEventArgs e)
     {
-        if (args.SelectedItem is NavigationViewItem item) ShowPage(item.Tag?.ToString() ?? "home");
+        if (sender is Button button) ShowPage(button.Tag?.ToString() ?? "home");
     }
 
     private void ShowPage(string tag)
