@@ -148,6 +148,9 @@ jobs:
             -p:WindowsPackageType=None `
             -p:WindowsAppSDKSelfContained=true `
             -p:EnableMsixTooling=false `
+            -p:EnableCoreMrtTooling=false `
+            -p:GenerateAppxPackageOnBuild=false `
+            -p:PublishAppxPackage=false `
             --no-restore
           if ($LASTEXITCODE -ne 0) {
             throw "Unpackaged EXE publish failed with exit code $LASTEXITCODE."
