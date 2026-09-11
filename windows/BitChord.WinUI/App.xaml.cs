@@ -13,8 +13,6 @@ public sealed partial class App : Application
 
     public App()
     {
-        InitializeComponent();
-
         AppDomain.CurrentDomain.UnhandledException += (_, eventArgs) =>
             WriteStartupDiagnostic(
                 "AppDomain.CurrentDomain.UnhandledException",
@@ -26,6 +24,16 @@ public sealed partial class App : Application
                 eventArgs.Exception);
             eventArgs.SetObserved();
         };
+
+        try
+        {
+            InitializeComponent();
+        }
+        catch (Exception exception)
+        {
+            WriteStartupDiagnostic("App.InitializeComponent", exception);
+            throw;
+        }
 
         if (!Resources.ContainsKey("TabViewButtonBackground"))
         {
